@@ -1,0 +1,15 @@
+*** Settings ***
+Library           AppiumLibrary
+
+*** Keywords ***
+点击立即注册按钮
+    Sleep    3s
+    Click Element    id=com.allin.social:id/btn_login_reg
+
+点击唯医会员登录按钮
+    Sleep    3s
+    Click Element    id=com.allin.social:id/btn_login_allmd
+
+点击CAOS会员登录按钮
+    Sleep    3s
+    Click Element    id=com.allin.social:id/btn_login_caos

@@ -1,0 +1,15 @@
+*** Settings ***
+Library           RequestsLibrary
+Library           Collections
+
+*** Test Cases ***
+唯医用户注册
+    Create Session    api    http://192.168.1.33:8080/allin_manager_platform//logSmsAction!list?order=asc&page=1&queryJson={'cellPhone'%3A'17700010001'}&rows=1&sort=id
+    ${addr}    Get Request    api    test
+    Comment    Should Be Equal As Strings    ${addr.status_code}    200
+    log    ${addr.content}
+    ${responsedata}    To Json    ${addr.content}
+    ${str}    Get From Dictionary    ${responsedata}    rows
+    ${list}    Get From List    ${str}    0
+    ${body}    Get From Dictionary    ${list}    smsContent
+    ${results}    Evaluate    re.compile('[0-9]{6}').findall('${body}')    re

@@ -1,0 +1,15 @@
+*** Settings ***
+Library           BuiltIn
+Library           Collections
+Library           DateTime
+Library           DeprecatedBuiltIn
+Library           DeprecatedOperatingSystem
+Library           Dialogs
+Library           Easter
+Library           OperatingSystem
+Library           Process
+Library           Reserved
+Library           Screenshot
+Library           String
+Library           Telnet
+Library           XML

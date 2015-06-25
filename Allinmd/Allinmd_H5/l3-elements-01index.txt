@@ -1,0 +1,28 @@
+*** Settings ***
+Library           Selenium2Library
+Library           UtilsLibrary
+
+*** Keywords ***
+进入医师首页
+    Selenium2Library.Click Element    xpath=.//*[@id='classMenu_a_top']/li[4]/a
+    sleep    3s
+
+进入病例首页
+    Selenium2Library.Click Element    xpath=.//*[@id='classMenu_a_top']/li[2]/a
+    sleep    3s
+
+进入视频首页
+    Selenium2Library.Click Element    xpath=.//*[@id='classMenu_a_top']/li[3]/a
+    sleep    3s
+
+进入文库首页
+    Selenium2Library.Click Element    xpath=.//*[@id='classMenu_a_top']/li[6]/a
+    sleep    3s
+
+进入话题首页
+    Selenium2Library.Click Element    xpath=.//*[@id='classMenu_a_top']/li[7]/a
+    sleep    3s
+
+点击搜索按钮
+    Wait Until Page Contains Element    xpath=html/body/section/div[1]/div[3]/a/div    10    Error:元素不可见
+    Click Element    xpath=html/body/section/div[1]/div[3]/a/div

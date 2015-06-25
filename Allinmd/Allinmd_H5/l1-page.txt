@@ -1,0 +1,201 @@
+*** Settings ***
+Library           Selenium2Library
+Library           UtilsLibrary
+Library           AutoItLibrary
+Library           Collections
+Resource          l3-elements-07personal.txt
+Resource          l3-elements-00public.txt
+Resource          l2-flow.txt
+
+*** Keywords ***
+退出登录
+    点击我的
+    点击设置按钮
+    点击退出按钮
+    ${title}=    Get Title
+    Run Keyword If    '${title}' == '唯医首页 - allinmd.cn'    log    已退出登录，等待验证。    ELSE    Fail    退出登录失败，请重新再试
+    点击我的
+    Sleep    3s
+    ${title}=    Get Title
+    Run Keyword If    '${title}' == '登录选择'    log    退出登录成功    ELSE    Fail    退出登录失败，请重新再试
+
+唯医用户登录
+    [Arguments]    ${username}    ${password}
+    打开浏览器
+    ${title}=    Get Title
+    Log    进入${title}
+    点击我的
+    点击唯医会员登录按钮
+    输入用户名和密码并登录    ${username}    ${password}
+    Sleep    3s
+    ${title}=    Get Title
+    Run Keyword If    '${title}' == '唯医首页 - allinmd.cn'    log    用户'${username}'登录成功    ELSE    Fail    登录失败，请稍后再试
+
+邮箱注册
+    ${random}=    Evaluate    random.randint(0,10000)    random,sys
+    ${cEmail}    Create Email
+    ${username}    Set Variable    ${cEmail}
+    Input Text    xpath=.//*[@id='email']    ${username}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Input Text    xpath=.//*[@id='passwd']    111111
+    Click Element    xpath=.//*[@id='loginBtn']
+    Sleep    10s
+    Save User Email    ${username}
+
+手机注册
+    ${temp}=    Evaluate    int(time.time())    time
+    ${temps}=    Evaluate    str(${temp})
+    Set Suite Variable    ${NoRZPhone}    177000${temps[5:10]}    #设为suite Variable，case08会用到
+    Input Text    xpath=.//*[@id='email']    ${NoRZPhone}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Sleep    5s
+    ${phone_code}=    Get Phone    ${managerPhoneUrl}    ${NoRZPhone}
+    Wait Until Page Contains Element    xpath=.//*[@id='valiCode']    10    元素不可见
+    Input Text    xpath=.//*[@id='valiCode']    ${phone_code}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Input Text    xpath=.//*[@id='passwd']    111111
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='loginBtn']
+    Sleep    10s
+    Save User Phone    ${NoRZPhone}
+
+修改密码
+    [Arguments]    ${nowPwd}    ${newPwd}
+    点击我的
+    点击设置按钮
+    点击修改密码按钮
+    输入旧密码和新密码并保存    ${nowPwd}    ${newPwd}
+    Sleep    5s
+    ${title}=    Get Title
+    Run Keyword If    '${title}' == '唯医登录'    log    密码已修改，需要登录验证    ELSE    Fail    密码修改失败，请重新再试。
+    输入用户名和密码并登录    ${userName}    ${newPwd}
+    ${status}=    Run Keyword And Return Status    Page Should Contain    个人中心
+    Run Keyword If    ${status}    log    用户'${username}'登录成功并且密码已成功修改    ELSE    Fail    登录失败，密码可能未修改成功，请检查后再试
+    点击设置按钮
+    点击修改密码按钮
+    输入旧密码和新密码并保存    ${newPwd}    ${nowPwd}
+    Sleep    5s
+
+手机忘记密码
+    [Arguments]    ${username}    ${newPasswd}
+    点击我的
+    点击唯医会员登录按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='allinLoginForm']/div[4]/a    10    元素不可见
+    Click Element    xpath=.//*[@id='allinLoginForm']/div[4]/a
+    Input Text    xpath=.//*[@id='account']    ${username}
+    Wait Until Page Contains Element    xpath=.//*[@id='loginBtn']    10    元素不可见
+    Click Element    xpath=.//*[@id='loginBtn']
+    Wait Until Page Contains Element    xpath=.//*[@id='code']    10    元素不可见
+    Click Element    xpath=.//*[@id='getSMCode']
+    Sleep    5s
+    ${code}=    Get Phone    ${managerPhoneUrl}    ${username}
+    Input Text    xpath=.//*[@id='code']    ${code}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Wait Until Page Contains Element    xpath=.//*[@id='password-hide']    10    元素不可见
+    Input Text    xpath=.//*[@id='password-hide']    ${newPasswd}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Wait Until Page Contains Element    xpath=.//*[@id='loginBtn']    10    元素不可见
+    ${status}    Run Keyword And Return Status    Page Should Contain    成功修改
+    Run Keyword If    ${status}    Log    密码已修改，需要登录验证    ELSE    Fail    密码修改失败，请坚持后再试
+    Click Element    xpath=//*[@id="loginBtn"]
+
+邮箱忘记密码
+    [Arguments]    ${username}    ${newPasswd}
+    点击我的
+    点击唯医会员登录按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='allinLoginForm']/div[4]/a    10    元素不可见
+    Click Element    xpath=.//*[@id='allinLoginForm']/div[4]/a
+    Input Text    xpath=.//*[@id='account']    ${username}
+    Wait Until Page Contains Element    xpath=.//*[@id='loginBtn']    10    元素不可见
+    Click Element    xpath=.//*[@id='loginBtn']
+    Sleep    5s
+    ${code}=    Get Email    ${managerEmailUrl}    ${username}
+    Go To    ${code}
+    Wait Until Page Contains Element    xpath=.//*[@id='password-hide']    10    元素不可见
+    Input Text    xpath=.//*[@id='password-hide']    ${newPasswd}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Wait Until Page Contains Element    xpath=.//*[@id='loginBtn']    10    元素不可见
+    ${status}=    Run Keyword And Return Status    Page Should Contain    成功修改
+    Run Keyword If    ${status}    Log    密码修改成功    Fail    密码修改失败，请坚持后再试
+
+CAOS用户登录
+    [Arguments]    ${username}    ${password}
+    打开浏览器
+    ${title}=    Get Title
+    Log    进入${title}
+    点击我的
+    点击CAOS会员登录按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='email']    10    元素不可见
+    Input Text    xpath=.//*[@id='email']    ${username}
+    Input Text    xpath=.//*[@id='loginForm']/div[2]/div[1]/input    ${password}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Sleep    5s
+    ${title}=    Get Title
+    Run Keyword If    '${title}' == '唯医首页 - allinmd.cn'    log    用户'${username}'登录成功    ELSE    Fail    登录失败，请稍后再试
+
+搜索结果页展示
+    #病例结果页
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='searchResultCon']/div/ul/li[1]
+    Sleep    1.5s
+    ${title}=    Get Text    xpath=.//*[@id='searchResultCon']/div/ul/li[1]
+    ${status}=    Run Keyword And Return Status    Element Should Contain    xpath=.//*[@id='searchResultListCon']/li[1]/div[1]/p    没有找到相关结果
+    Run Keyword If    ${status}    Log    很抱歉，${title}结果页没有找到相关结果    ELSE    搜索_病例结果页展示
+    #视频结果页
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='searchResultCon']/div/ul/li[2]
+    Sleep    1.5s
+    ${title}=    Get Text    xpath=.//*[@id='searchResultCon']/div/ul/li[2]
+    ${status}=    Run Keyword And Return Status    Element Should Contain    xpath=.//*[@id='searchResultListCon']/li[2]/div[1]/p    没有找到相关结果
+    Run Keyword If    ${status}    Log    很抱歉，${title}结果页没有找到相关结果    ELSE    搜索_视频结果页展示
+    #医师结果页
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='searchResultCon']/div/ul/li[3]
+    Sleep    1.5s
+    ${title}=    Get Text    xpath=.//*[@id='searchResultCon']/div/ul/li[3]
+    ${status}=    Run Keyword And Return Status    Element \ Should Contain    xpath=.//*[@id='searchResultListCon']/li[3]/div[1]/p    没有找到相关结果
+    Run Keyword If    ${status}    Log    很抱歉，${title}结果页没有找到相关结果    ELSE    搜索_医师结果页展示
+    #文库结果页
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='searchResultCon']/div/ul/li[4]
+    Sleep    1.5s
+    ${title}=    Get Text    xpath=.//*[@id='searchResultCon']/div/ul/li[4]
+    ${status}=    Run Keyword And Return Status    Element \ Should Contain    xpath=.//*[@id='searchResultListCon']/li[4]/div[1]/p    没有找到相关结果
+    Run Keyword If    ${status}    Log    很抱歉，${title}结果页没有找到相关结果    ELSE    搜索_文库结果页展示
+    #话题结果页
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='searchResultCon']/div/ul/li[5]
+    Sleep    1.5s
+    ${title}=    Get Text    xpath=.//*[@id='searchResultCon']/div/ul/li[5]
+    ${status}=    Run Keyword And Return Status    Element \ Should Contain    xpath=.//*[@id='searchResultListCon']/li[5]/div[1]/p    没有找到相关结果
+    Run Keyword If    ${status}    Log    很抱歉，${title}结果页没有找到相关结果    ELSE    搜索_话题结果页展示
+    #标签结果页
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='searchResultCon']/div/ul/li[6]
+    Sleep    1.5s
+    ${title}=    Get Text    xpath=.//*[@id='searchResultCon']/div/ul/li[6]
+    ${status}=    Run Keyword And Return Status    Element \ Should Contain    xpath=.//*[@id='searchResultListCon']/li[6]/div[1]/p    没有找到相关结果
+    Run Keyword If    ${status}    Log    很抱歉，${title}结果页没有找到相关结果    ELSE    搜索_标签结果页展示
+
+标签列表资源切换并排序
+    点击我的
+    Wait Until Page Contains Element    xpath=.//*[@class='dy_cont']/a/div/div    10    元素不可见
+    Sleep    3s
+    Click Element    xpath=.//*[@class='dy_cont']/a/div/div
+    Sleep    3s
+    ${tagId}=    Get Element Attribute    xpath=.//*[@id='slider']/div[1]/ul/li[1]@id
+    Wait Until Page Contains Element    xpath=.//*[@id='${tagId}']/ul/li[1]    10    元素不可见
+    Click Element    xpath=.//*[@id='${tagId}']/ul/li[1]
+    Wait Until Page Contains Element    xpath=.//*[@id='dyNum']    10    元素不可见
+    ${title}    Get Title
+    ${num}    Get Text    xpath=.//*[@id='dyNum']
+    Log    已进入${title},共有${num}
+    Run Keyword And Continue On Failure    病例标签页按最多评论排序
+    Run Keyword And Continue On Failure    病例标签页按最多浏览排序
+    Run Keyword And Continue On Failure    视频标签页按最多评论排序
+    Run Keyword And Continue On Failure    视频标签页按最多浏览排序
+    Run Keyword And Continue On Failure    文库标签页按最多评论排序
+    Run Keyword And Continue On Failure    文库标签页按最多浏览排序
+    Run Keyword And Continue On Failure    话题标签页按最多评论排序
+    Run Keyword And Continue On Failure    话题标签页按最多浏览排序
+    [Teardown]    关闭浏览器

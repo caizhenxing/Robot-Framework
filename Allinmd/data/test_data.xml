@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--H5测试数据-->
+<infos>
+	<!--1：线上环境   2：测试环境-->
+	<switch>2</switch>
+	<lineInfo>
+		<!-- platformName -->
+		<platformName>Android</platformName>
+		<!-- platformVersion -->
+		<platformVersion>4.4</platformVersion>
+		<!-- deviceName -->
+		<deviceName>HUAWEI_MT7_TL00</deviceName>
+		<!-- udid -->
+		<udid>P4M7N15430018890</udid>
+		<!-- browserName -->
+		<browserName>chrome</browserName>
+		<!-- url -->
+		<url>http://m.allinmd.cn</url>
+		<!-- 唯医登录邮箱（已认证）-->
+		<email>smc13800@163.com</email>
+		<!-- 唯医登录邮箱（未认证）-->
+		<emailNotRenZheng>smc13801@163.com</emailNotRenZheng>
+		<!-- 唯医登录手机（已认证） -->
+		<phone>17700010000</phone>
+		<!-- 唯医登录手机（未认证） -->
+		<phoneNotRenZheng>17700010001</phoneNotRenZheng>
+		<!-- caos登录邮箱 -->
+		<caosEmail>testcaos@smc.com</caosEmail>
+		<!-- caos登录手机 -->
+		<caosPhone>17700008800</caosPhone>
+		<!-- 后台获取邮件日志 -->
+		<managerEmailUrl>http://manager.allinmd.cn/allin_manager_platform//logEmailAction!list</managerEmailUrl>
+		<!-- 后台获取短信日志 -->
+		<managerPhoneUrl>http://manager.allinmd.cn/allin_manager_platform//logSmsAction!list</managerPhoneUrl>
+	</lineInfo>
+	<testInfo>
+		<!-- platformName -->
+		<platformName>Android</platformName>
+		<!-- platformVersion -->
+		<platformVersion>4.4</platformVersion>
+		<!-- deviceName -->
+		<deviceName>HUAWEI_MT7_TL00</deviceName>
+		<!-- udid -->
+		<udid>P4M7N15430018890</udid>
+		<!-- browserName -->
+		<browserName>chrome</browserName>
+		<!-- url -->
+		<url>http://m.allinmd.cn</url>
+		<!-- 唯医登录邮箱（已认证）-->
+		<email>smc13800@163.com</email>
+		<!-- 唯医登录邮箱（未认证）-->
+		<emailNotRenZheng>smc13801@163.com</emailNotRenZheng>
+		<!-- 唯医登录手机（已认证） -->
+		<phone>17700010000</phone>
+		<!-- 唯医登录手机（未认证） -->
+		<phoneNotRenZheng>17700010001</phoneNotRenZheng>
+		<!-- caos登录邮箱 -->
+		<caosEmail>testcaos@smc.com</caosEmail>
+		<!-- caos登录手机 -->
+		<caosPhone>17700008800</caosPhone>
+		<!-- 后台获取邮件日志 -->
+		<managerEmailUrl>http://192.168.1.33:8080/allin_manager_platform//logEmailAction!list</managerEmailUrl>
+		<!-- 后台获取短信日志 -->
+		<managerPhoneUrl>http://192.168.1.33:8080/allin_manager_platform//logSmsAction!list</managerPhoneUrl>
+	</testInfo>
+</infos>

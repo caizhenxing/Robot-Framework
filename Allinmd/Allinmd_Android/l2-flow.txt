@@ -1,0 +1,36 @@
+*** Settings ***
+Library           AppiumLibrary
+Library           UtilsLibrary
+
+*** Keywords ***
+安装并启动应用
+    ${pwd}    Evaluate    os.getcwd()    os
+    Open Application    http://localhost:4723/wd/hub    app=${pwd}\\apps\\Allinmd.apk    automationName=Appium    platformVersion=4.4.4    platformName=Android    udid=94122ad8
+    ...    deviceName=MI_2A    unicodeKeyboard=true    resetKeyboard=true
+    Input Text    id=com.allin.social:id/et_create_username    test10001@smc.com
+    Click Element    id=com.allin.social:id/btn_createuser_next
+    Input Text    id=com.allin.social:id/et_create_password    123456
+    Click Element    id=com.allin.social:id/btn_create_confirm
+
+输入用户名和密码并登录
+    Sleep    3s
+    Input Text    xpath=com.allin.social:id/et_callmdlogin_user    ${username}
+    Input Text    xpath=com.allin.social:id/et_allmdlogin_pw    ${password}
+    Element Should Be Enabled    id=com.allin.social:id/btn_login_allmd
+    Click Element    id=com.allin.social:id/btn_login_allmd
+    Sleep    5s
+
+医师认证
+    ${random}=    Evaluate    random.randint(10000000,100000000)    random,sys
+    ${lastname}=    Get Lastname
+    ${firstname}=    Get FirstName
+    Input Text    id=com.allin.social:id/et_unth_name    ${lastname}
+    Input Text    id=com.allin.social:id/et_unth_surname    ${firstname}
+    Click Element    id=com.allin.social:id/rl_auth_hospital
+    例子    xpath=//android.widget.EditText[contains(@index,0)]
+    例子    xpath=//android.widget.LinearLayout[@index=7]
+    例子    xpath=//*[contains(@index,'0')]//*[contains(@text,'游戏')]
+
+启动应用
+    Open Application    http://localhost:4723/wd/hub    appPackage=com.allin.social    appActivity=.loading.BootingActivity    automationName=Appium    platformVersion=4.4.4    platformName=Android
+    ...    udid=94122ad8    deviceName=MI_2A    unicodeKeyboard=true    resetKeyboard=true

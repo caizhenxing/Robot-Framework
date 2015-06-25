@@ -1,0 +1,46 @@
+*** Settings ***
+Library           Selenium2Library
+Library           UtilsLibrary
+Library           Collections
+Resource          l2-flow.txt
+
+*** Keywords ***
+进入文库终端页
+    Selenium2Library.Click Element    xpath=.//*[@id='videoList']/li[2]/div/div[1]/a
+    Sleep    5s
+
+点击全部按钮
+    Selenium2Library.Click Element    xpath=.//*[@class='tag_li_index']/li[1]/div/a
+    ${title}    Get Title
+    log    已进入${title}
+    Sleep    3s
+
+列表按最多评论排序
+    Wait Until Page Contains Element    xpath=.//*[@class='order-box']    10    元素不可见
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[4]/div    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[4]/div
+    Sleep    3s
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    7
+    \    ${str}=    Get Text    xpath=.//*[@id='videoList']/li[${i}]/div/div[2]/div[4]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]} and ${text[2]} >= ${text[3]} and ${text[3]} >=${text[4]} and ${text[4]} >= ${text[5]} \    Log    按最多评论排序成功    ELSE    Fail    当前没有按最多评论排序
+
+列表按最多浏览排序
+    Wait Until Page Contains Element    xpath=.//*[@class='order-box']    10    元素不可见
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[3]/div    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[3]/div
+    Sleep    3s
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    7
+    \    ${str}=    Get Text    xpath=.//*[@id='videoList']/li[${i}]/div/div[2]/div[3]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]} and ${text[2]} >= ${text[3]} and ${text[3]} >=${text[4]} and ${text[4]} >= ${text[5]} \    Log    按最多浏览排序成功    ELSE    Fail    当前没有按最多浏览排序
+
+进入文库列表
+    进入文库首页
+    l3-elements-05doc .点击全部按钮

@@ -1,0 +1,28 @@
+*** Settings ***
+Library           AppiumLibrary
+Library           UtilsLibrary
+
+*** Keywords ***
+邮箱注册
+    ${random}=    Evaluate    random.randint(10000,20000)    random,sys
+    ${username}    Set Variable    ${random}test@smc.com
+    Input Text    id=com.allin.social:id/et_create_username    ${username}
+    Click Element    id=com.allin.social:id/btn_createuser_next
+    Input Text    id=com.allin.social:id/et_create_password    123456
+    Click Element    id=com.allin.social:id/btn_create_confirm
+    Sleep    10s
+    Save User Email    ${username}
+
+手机注册
+    ${temp}=    Evaluate    int(time.time())    time
+    ${temps}=    Evaluate    str(${temp})
+    ${phone}=    Set Variable    177000${temps[5:10]}
+    Input Text    id=com.allin.social:id/et_create_username    ${phone}
+    Click Element    id=com.allin.social:id/btn_createuser_next
+    Sleep    5s
+    ${phone_code}=    Get Phone    http://192.168.1.33:8080/allin_manager_platform//logSmsAction!list    ${phone}
+    Input Text    id=com.allin.social:id/ll_up_keyboard    ${phone_code}
+    Input Text    id=com.allin.social:id/et_create_password    123456
+    Click Element    id=com.allin.social:id/btn_create_confirm
+    Sleep    10s
+    Save User Phone    ${phone}

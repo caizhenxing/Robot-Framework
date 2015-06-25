@@ -1,0 +1,21 @@
+*** Settings ***
+Library           Collections
+Library           Selenium2Library
+
+*** Keywords ***
+注册
+
+打开手机浏览器
+    [Arguments]    ${url}    ${browser}
+    ${capabilities}=    Create Dictionary
+    Set To Dictionary    ${capabilities}    automationName    Selendroid
+    Set To Dictionary    ${capabilities}    platformVersion    4.1.1
+    Set To Dictionary    ${capabilities}    platform    WINDOWS
+    Set To Dictionary    ${capabilities}    deviceName    MI_2A
+    Set To Dictionary    ${capabilities}    platformName    Android
+    Set To Dictionary    ${capabilities}    udid    94122ad8
+    Log Dictionary    ${capabilities}
+    Close Browser
+    Close All Browsers
+    Set Selenium Timeout    30
+    Open Browser    ${url}    browser=${browser}    remote_url=http://127.0.0.1:4723/wd/hub    desired_capabilities=${capabilities}

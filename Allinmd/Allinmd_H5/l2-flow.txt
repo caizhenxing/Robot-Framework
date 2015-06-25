@@ -1,0 +1,534 @@
+*** Settings ***
+Library           Selenium2Library
+Library           UtilsLibrary
+Library           AutoItLibrary
+Library           Collections
+Resource          l3-elements-00public.txt
+Resource          l3-elements-07personal.txt
+Resource          l3-elements-02case.txt
+Resource          l3-elements-05doc.txt
+Resource          l3-elements-06topic.txt
+Resource          l3-elements-03video.txt
+Resource          l3-elements-04expert.txt
+Resource          l3-elements-01index.txt
+
+*** Keywords ***
+医师认证
+    Sleep    3s
+    Title Should Be    医师认证
+    ${random}=    Evaluate    random.randint(10000000,100000000)    random,sys
+    ${lastname}=    Get Lastname
+    ${firstname}=    Get FirstName
+    Selenium2Library.Input Text    id=lastName    ${lastname}
+    Selenium2Library.Input Text    xpath=.//*[@id='firstName']    ${firstname}
+    Select From List By Value    xpath=.//*[@id='certificate']    6
+    Selenium2Library.Input Text    xpath=.//*[@id='attCode']    ys${random}
+    Choose File    xpath=.//*[@id='file1']    //storage//sdcard0//temp//4.jpg
+    Wait Until Page Contains Element    xpath=/html/body/section[1]/div[4]/div/a[2]    15s    元素不可见
+    Selenium2Library.Click Element    xpath=/html/body/section[1]/div[4]/div/a[2]
+    Selenium2Library.Click Element    id=companyChoose
+    Selenium2Library.Click Element    xpath=.//*[@id='sProvince']/div[2]/div[1]/img
+    Selenium2Library.Input Text    xpath=.//*[@id='seachKey']    北京大学第三医院
+    Sleep    1.5s
+    Selenium2Library.Click Element    xpath=.//*[@id='search_list']/li
+    Selenium2Library.Click Element    id=medicalTitleChoose
+    Selenium2Library.Click Element    xpath=.//*[@id='medical01']/li[1]/div
+    Selenium2Library.Click Element    xpath=.//*[@id='medicalTitleSave']
+    Selenium2Library.Click Element    id=areaExpertiseChoose
+    Selenium2Library.Click Element    xpath=.//*[@id='areasExpertisePage']/div[3]/ul/li[1]/div
+    Selenium2Library.Click Element    xpath=.//*[@id='areasExpertiseSave']
+    Sleep    1.5s
+    Selenium2Library.Click Element    xpath=.//*[@id='submit']
+    Sleep    5s
+    [Teardown]
+
+输入用户名和密码并登录
+    [Arguments]    ${username}    ${password}
+    Wait Until Page Contains Element    xpath=.//*[@id='email']    10    元素不可见
+    Input Text    xpath=.//*[@id='email']    ${username}
+    Input Text    xpath=.//*[@id='allinLoginForm']/div[2]/div[1]/input    ${password}
+    Click Element    xpath=.//*[@id='loginBtn']
+    Sleep    3s
+
+输入旧密码和新密码并保存
+    [Arguments]    ${nowPwd}    ${newPwd}
+    Wait Until Page Contains Element    xpath=.//*[@id='nowPwd']    10    元素不可见
+    Input Text    xpath=.//*[@id='nowPwd']    ${nowPwd}
+    Input Text    xpath=.//*[@id='newPwd']    ${newPwd}
+    Input Text    xpath=.//*[@id='repPwd']    ${newPwd}
+    Click Element    xpath=.//*[@id='saveBtn']
+
+输入数据并点击搜索按钮
+    [Arguments]    ${value}
+    Wait Until Page Contains Element    xpath=.//*[@id='keyWord']    10    元素不可见
+    Input Text    xpath=.//*[@id='keyWord']    ${value}
+    Sleep    1.5s
+    Press Key    xpath=.//*[@id='keyWord']    \\13
+    Sleep    2s
+
+搜索_病例结果页展示
+    Sleep    2s
+    ${num}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[1]/ul/li
+    Log    ${title}结果页共搜索到${num}条符合条件的信息，分别是：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[1]/ul/li[${i}]/div/div[2]/div[1]/a
+
+搜索_视频结果页展示
+    Sleep    2s
+    ${num}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[2]/ul/li
+    Log    ${title}结果页共搜索到${num}条符合条件的信息，分别是：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[2]/ul/li[${i}]/div/div[2]/div[1]/a
+
+搜索_医师结果页展示
+    Sleep    2s
+    ${num}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[3]/ul/li
+    Log    ${title}结果页共搜索到${num}条符合条件的信息，分别是：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[3]/ul/li[${i}]/div/div[2]/div[2]/a
+
+搜索_文库结果页展示
+    Sleep    2s
+    ${num}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[4]/ul/li
+    Log    ${title}结果页共搜索到${num}条符合条件的信息，分别是：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[4]/ul/li[${i}]/div/div[1]/a
+
+搜索_话题结果页展示
+    Sleep    2s
+    ${num}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[5]/ul/li
+    Log    ${title}结果页共搜索到${num}条符合条件的信息，分别是：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[5]/ul/li[${i}]/div/div[2]/div/a
+
+搜索_标签结果页展示
+    Sleep    2s
+    ${num}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[6]/ul/li
+    Log    ${title}结果页共搜索到${num}条符合条件的信息，分别是：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[6]/ul/li[${i}]/div/a
+
+病例标签页按最多评论排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[1]/span    10    元素不可见    #病例Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[1]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[1]/span
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[4]    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[4]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[1]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[1]/ul/li[${i}]/div/div[2]/div[2]/div[3]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多评论排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多评论排序
+
+病例标签页按最多浏览排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[1]/span    10    元素不可见    #病例Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[1]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[1]/span
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[3]    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[3]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[1]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[1]/ul/li[${i}]/div/div[2]/div[2]/div[2]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多浏览排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多浏览排序
+
+视频标签页按最多评论排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[2]/span    10    元素不可见    #视频Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[2]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[2]/span
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[4]    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[4]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[2]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[2]/ul/li[${i}]/div/div[2]/div[2]/div[3]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多评论排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多评论排序
+
+视频标签页按最多浏览排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[2]/span    10    元素不可见    #视频Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[2]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[2]/span
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[3]    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[3]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[2]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[2]/ul/li[${i}]/div/div[2]/div[2]/div[2]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多浏览排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多浏览排序
+
+文库标签页按最多评论排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[3]/span    10    元素不可见    #文库Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[3]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[3]/span
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[4]    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[4]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[3]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[3]/ul/li[${i}]/div/div[2]/div[4]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多评论排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多评论排序
+
+文库标签页按最多浏览排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[3]/span    10    元素不可见    #文库Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[3]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[3]/span
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[3]    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[3]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[3]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[3]/ul/li[${i}]/div/div[2]/div[3]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多浏览排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多浏览排序
+
+话题标签页按最多评论排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[4]/span    10    元素不可见    #话题Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[4]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[4]/span
+    Click Element    xpath=html/body/section/div[2]/div[2]/div[1]/div[1]
+    Wait Until Page Contains Element    xpath=html/body/section/div[2]/div[3]/ul/li[4]    10    元素不可见
+    Click Element    xpath=html/body/section/div[2]/div[3]/ul/li[4]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[4]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[4]/ul/li[${i}]/div/div[2]/div[2]/div[3]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多评论排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多评论排序
+
+话题标签页按最多浏览排序
+    Wait Until Page Contains Element    xpath=.//*[@class='yy_content']/ul[1]/li[4]/span    10    元素不可见    #话题Tab
+    Click Element    xpath=.//*[@class='yy_content']/ul[1]/li[4]/span
+    ${tabName}    Get Text    xpath=.//*[@class='yy_content']/ul[1]/li[4]/span
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[3]    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[3]
+    Sleep    3s
+    ${count}=    Get Matching Xpath Count    xpath=.//*[@id='searchResultListCon']/li[4]/ul/li
+    ${num}=    Set Variable If    ${count} >= 10    10    ${count}
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${str}=    Get Text    xpath=.//*[@id='searchResultListCon']/li[4]/ul/li[${i}]/div/div[2]/div[2]/div[2]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${num} <= 2    Log    ${tabName}Tab页数据 <= 2条，无法做验证。    ELSE    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]}
+    ...    Log    ${tabName}Tab页按最多浏览排序成功    ELSE    Fail    ${tabName}Tab页当前没有按最多浏览排序
+
+发布病例
+    Wait Until Page Contains Element    xpath=html/body/section/div[1]/img    10    元素不可见
+    Click Element    xpath=html/body/section/div[1]/img
+    Wait Until Page Contains Element    xpath=.//*[@id='expertList']/li[1]/div    10    元素不可见
+    Click Element    xpath=.//*[@id='expertList']/li[1]/div
+    Click Element    xpath=.//*[@id='expertList']/li[2]/div
+    Click Element    xpath=.//*[@id='success']
+    Wait Until Page Contains Element    xpath=.//*[@id='case_name']    10    元素不可见
+    Set Test Variable    ${caseTitle}    男性，61岁，渐进性活动后呼吸困难五年    #标题必须少于20个字，否则下面判断会有问题。
+    Input Text    xpath=.//*[@id='case_name']    ${caseTitle}    #病例标题
+    Click Element    xpath=html/body/section/div[2]/div[2]/div[4]/img    #病人性别：女
+    Sleep    2s
+    Input Text    xpath=.//*[@id='age']    61    #病人年龄
+    Input Text    xpath=.//*[@id='main_narrate']    渐进性活动后呼吸困难五年，明显加重伴下肢浮肿一个月    #主诉
+    Sleep    2s
+    Input Text    xpath=.//*[@id='illness_history']    无    #现病史
+    Input Text    xpath=.//*[@id='professional_checking']    五年前，因登山时突感心悸、气短、胸闷，休息约1小时稍有缓解。    #专科检查
+    Sleep    2s
+    Input Text    xpath=.//*[@id='discussion']    脆骨病又称成骨不全，是一种以骨骼脆性增加及胶原代谢紊乱为特征的全身性结缔组织疾病，其临床特征为下肢易发和多发骨折，骨折后骨折端常常出现成角或弓形畸形，严重影响儿童生长发育。    #讨论
+    Sleep    2s
+    Choose File    xpath=.//*[@id='uploadify']    //storage//sdcard0//temp//1.jpg    #上传三张图片
+    Sleep    4s
+    Click Element    xpath=.//*[@id='save']
+    Wait Until Page Contains Element    xpath=.//*[@id='uploadify']    10    元素不可见
+    Choose File    xpath=.//*[@id='uploadify']    //storage//sdcard0//temp//2.jpg
+    Sleep    4s
+    Click Element    xpath=.//*[@id='save']
+    Wait Until Page Contains Element    xpath=.//*[@id='uploadify']    10    元素不可见
+    Choose File    xpath=.//*[@id='uploadify']    //storage//sdcard0//temp//3.jpg
+    Sleep    4s
+    Click Element    xpath=.//*[@id='save']
+    Click Element    xpath=.//*[@id='tag_title']    #标签：关节、足踝
+    Wait Until Page Contains Element    xpath=html/body/section/div[2]/ul[1]/li[1]/div    10    元素不可见
+    Click Element    xpath=html/body/section/div[2]/ul[1]/li[1]/div
+    Click Element    xpath=html/body/section/div[2]/ul[1]/li[2]/div
+    Sleep    0.5s
+    Click Element    xpath=.//*[@id='success']
+    Wait Until Page Contains Element    xpath=.//*[@id='upload_btn']    10    元素不可见
+    Click Element    xpath=.//*[@id='upload_btn']
+    Sleep    5s
+    ${title}=    Get Title
+    ${status}=    Run Keyword And Return Status    Should Contain    ${title}    ${caseTitle}
+    Run Keyword If    ${status}    Log    病例发布成功    ELSE    Fail    病例发布失败，请检查后再试
+
+编辑病例
+    ${pageTitle}=    Get Title
+    Wait Until Page Contains Element    xpath=html/body/section/div[4]/div/div[2]/div[3]/div/a    10    元素不可见
+    Click Element    xpath=html/body/section/div[4]/div/div[2]/div[3]/div/a
+    ${title}=    Get Title
+    Log    开始${title}
+    ${age}=    Set Variable    50
+    Input Text    xpath=.//*[@id='age']    ${age}
+    Click Element    xpath=html/body/section/div[4]/div[1]/div/ul
+    Wait Until Page Contains Element    xpath=html/body/section/div[2]/ul[1]/li[3]/div    10    元素不可见
+    Click Element    xpath=html/body/section/div[2]/ul[1]/li[3]/div
+    ${text}=    Get Text    xpath=html/body/section/div[2]/ul[1]/li[3]/div
+    Click Element    xpath=.//*[@id='success']
+    Wait Until Page Contains Element    xpath=.//*[@id='upload_btn']    10    元素不可见
+    Click Element    xpath=.//*[@id='upload_btn']
+    Sleep    5s
+    ${status1}=    Run Keyword And Return Status    Title Should Be    ${pageTitle}
+    Run Keyword If    ${status1}    Log    病例编辑完成    ELSE    Fail    病例编辑失败，请检查后再试。
+    ${status2}=    Run Keyword And Return Status    Element Should Contain    xpath=html/body/section/div[4]/div/div[6]    ${age}
+    ${status3}=    Run Keyword And Return Status    Page Should Contain    ${text}
+    Run Keyword If    ${status1} and ${status2} and ${status3}    Log    病例编辑成功，数据已做更改    ELSE    Fail    该病例编辑的数据没有做更新，请检查后再试。
+
+查看病例
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[3]/a/div[1]    10    元素不可见
+    Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[3]/a/div[1]
+    Wait Until Page Contains Element    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div    10    元素不可见
+    ${status1}=    Run Keyword And Return Status    Element Text Should Be    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div    ${caseTitle}
+    Run Keyword If    ${status1}    Log    个人中心可以看到病例'${caseTitle}'    ELSE    Fail    个人中心没有看到病例'${caseTitle}'。请检查后再试。${caseTitle}
+    Run Keyword If    ${status1}    Click Element    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div
+    Wait Until Page Contains Element    xpath=html/body/section/div[4]/div/div[1]    10    元素不可见
+    ${title}=    Get Title
+    ${status2}=    Run Keyword And Return Status    Should Contain    ${title}    ${caseTitle}
+    Run Keyword If    ${status2}    Log    进入终端页，查看病例成功    ELSE    Fail    查看病例失败，请检查后再试
+
+发布话题
+    Wait Until Page Contains Element    xpath=html/body/section/div[1]/img    10    元素不可见
+    Click Element    xpath=html/body/section/div[1]/img
+    Wait Until Page Contains Element    xpath=.//*[@id='topic_name']    10    元素不可见
+    Set Test Variable    ${caseTitle}    痛风性踝关节炎1例
+    Input Text    xpath=.//*[@id='topic_name']    ${caseTitle}
+    Input Text    xpath=.//*[@id='topic_discuss']    患者，男，38岁，因左踝关节进行性僵硬多年，要求手术，有多年痛风病史，5年前曾因右肘痛风性结节而于本院手术。查体：右肘关节完全伸直时受限，左上肢、右下肢正常，左髋、膝关节活动正常，左踝关节明显僵硬，蹲位时左足跟需上抬，左足跖底不能贴伏地面，左跟腱紧张，踝关节保持在90°位时被动背伸仅10°左右活动范围，足背伸时出现明显的骨档，跟腱两侧饱满。
+    Sleep    2s
+    Choose File    xpath=.//*[@id='uploadify']    //storage//sdcard0//temp//1.jpg
+    Sleep    4s
+    Wait Until Page Contains Element    xpath=//*[@id="popupBasic2"]/a[2]    10    元素不可见
+    Click Element    xpath=//*[@id="popupBasic2"]/a[2]
+    Click Element    xpath=.//*[@id='tag_title']    #标签：关节、足踝
+    Wait Until Page Contains Element    xpath=/html/body/section/div[2]/ul[1]/li[1]    10    元素不可见
+    Click Element    xpath=/html/body/section/div[2]/ul[1]/li[1]
+    Click Element    xpath=/html/body/section/div[2]/ul[1]/li[2]
+    Click Element    xpath=//*[@id="success"]
+    Wait Until Page Contains Element    xpath=.//*[@id='upload_btn']    10    元素不可见
+    Click Element    xpath=.//*[@id='upload_btn']
+    Wait Until Page Contains Element    xpath=.//*[@id='upload_btn']    10    元素不可见
+    Click Element    xpath=.//*[@id='upload_btn']
+    Sleep    5s
+    ${title}=    Get Title
+    ${status}=    Run Keyword And Return Status    Should Contain    ${title}    ${caseTitle}
+    Run Keyword If    ${status}    Log    话题发布成功    ELSE    Fail    话题发布失败，请检查后再试
+
+个人中心查看收藏的病例
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]    10    元素不可见
+    Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]
+    Sleep    3s
+    ${title}    Get Text    xpath=.//*[@id='collectHeight']/div[2]
+    Set Test Variable    ${currTitle}    ${title}
+    ${tagName}    Get Text    xpath=.//*[@id='options-select-menu']/li[1]/span
+    Log    已进入${currTitle}页面${tagName}列表
+    ${text}=    Get Text    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div
+    ${status}=    Run Keyword And Return Status    Should Contain    ${pageTitle}    ${text[2:0]}
+    Run Keyword If    ${status}    Log    资源'${text}'收藏成功    ELSE    Fail    资源'${text}'收藏失败或个人中心未找到，请检查后再试。
+
+个人中心查看收藏的视频
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]    10    元素不可见
+    Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]
+    Sleep    3s
+    Click Element    xpath=.//*[@id='options-select-menu']/li[2]
+    Wait Until Page Contains Element    xpath=.//*[@id='videoList']/li[1]/div/div[2]/a/title-two-rows/div    10    元素不可见
+    ${title}    Get Text    xpath=.//*[@id='collectHeight']/div[2]
+    Set Test Variable    ${currTitle}    ${title}
+    ${tagName}    Get Text    xpath=.//*[@id='options-select-menu']/li[2]/span
+    Log    已进入${currTitle}页面${tagName}列表
+    ${text}=    Get Text    xpath=.//*[@id='videoList']/li[1]/div/div[2]/a/title-two-rows/div
+    ${status}=    Run Keyword And Return Status    Should Contain    ${pageTitle}    ${text[2:0]}
+    Run Keyword If    ${status}    Log    资源'${text}'收藏成功    ELSE    Fail    资源'${text}'收藏失败或个人中心未找到，请检查后再试。
+
+个人中心查看收藏的文库
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]    10    元素不可见
+    Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]
+    Sleep    3s
+    Click Element    xpath=.//*[@id='options-select-menu']/li[3]
+    ${tagName}    Get Text    xpath=.//*[@id='options-select-menu']/li[2]/span
+    Log    已进入${currTitle}页面${tagName}列表
+    ${text}=    Get Text    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div
+    ${status}=    Run Keyword And Return Status    Should Contain    ${pageTitle}    ${text}
+    Run Keyword If    ${status}    Log    资源'${text}'收藏成功    ELSE    Fail    资源'${text}'收藏失败或个人中心未找到，请检查后再试。
+
+个人中心查看收藏的话题
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]    10    元素不可见
+    Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[1]/a/div[1]
+    Sleep    3s
+    Click Element    xpath=.//*[@id='options-select-menu']/li[4]
+    ${title}    Get Text    xpath=.//*[@id='collectHeight']/div[2]
+    Set Test Variable    ${currTitle}    ${title}
+    ${tagName}    Get Text    xpath=.//*[@id='options-select-menu']/li[2]/span
+    Log    已进入${currTitle}页面${tagName}列表
+    ${text}=    Get Text    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div
+    ${status}=    Run Keyword And Return Status    Should Contain    ${pageTitle}    ${text[2:0]}
+    Run Keyword If    ${status}    Log    资源'${text}'收藏成功    ELSE    Fail    资源'${text}'收藏失败或个人中心未找到，请检查后再试。
+
+点击收藏按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='float']/ul/li[3]/img    10    元素不可见
+    Click Element    xpath=.//*[@id='float']/ul/li[3]/img
+    ${title}    Get Title
+    Set Test Variable    ${pageTitle}    ${title}
+
+个人中心查看话题
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[6]/a/div[1]    10    元素不可见
+    Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[6]/a/div[1]
+    Wait Until Page Contains Element    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div    10    元素不可见
+    ${status1}=    Run Keyword And Return Status    Element Text Should Be    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div    ${caseTitle}
+    Run Keyword If    ${status1}    Log    个人中心可以看到话题'${caseTitle}'    ELSE    Fail    个人中心没有看到话题'${caseTitle}'。请检查后再试。${caseTitle}
+    Run Keyword If    ${status1}    Click Element    xpath=.//*[@id='allinLoginPage']/div[2]/div/ul/li[1]/div[2]/a/title-two-rows/div
+    Wait Until Page Contains Element    xpath=html/body/section/div[2]/div/div[1]    10    元素不可见
+    ${title}=    Get Title
+    ${status2}=    Run Keyword And Return Status    Should Contain    ${title}    ${caseTitle}
+    Run Keyword If    ${status2}    Log    进入终端页，查看话题成功    ELSE    Fail    查看话题失败，请检查后再试
+
+查看他人资源
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[2]/a/div[1]    10    元素不可见
+    : FOR    ${i}    IN RANGE    2    9
+    \    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[3]/ul/li[${i}]/a/div[1]    10    元素不可见
+    \    Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[${i}]/a/div[1]
+    \    Sleep    2s
+    \    ${title}=    Get Text    xpath=.//*[@id='allinLoginPage']/div[1]/div[2]
+    \    ${status}=    Run Keyword And Return Status    Element Should Contain    xpath=.//*[@id='allinLoginPage']/div[2]/div    TA还没有
+    \    Run Keyword If    ${status}    Log    ${title}列表是空的    ELSE    Log
+    \    ...    ${title}列表有数据
+    \    Go Back
+    \    Sleep    2s
+
+查看粉丝列表
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span    10    元素不可见
+    ${fans}=    Get Text    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span
+    Click Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[2]/ul/li[1]/a/div[2]/div[1]    10    元素不可见
+    ${num}=    Set Variable If    ${fans} >= 10    10    ${fans}
+    Log    共有${fans}个粉丝，输出前${num}个粉丝的姓名：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=html/body/div[1]/section/div[2]/ul/li[${i}]/a/div[2]/div[1]
+    Go Back
+    Sleep    1.5s
+    Go Back
+    点击我的
+
+查看他人粉丝列表
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span    10    元素不可见
+    ${fans}=    Get Text    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span
+    Click Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[2]/ul/li[1]/a/div[2]/div[1]    10    元素不可见
+    ${num}=    Set Variable If    ${fans} >= 7    7    ${fans}
+    Log    共有${fans}个粉丝，输出前${num}个粉丝的姓名：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=html/body/div[1]/section/div[2]/ul/li[${i}]/a/div[2]/div[1]
+
+查看我的粉丝列表
+    Go To    http://m.allinmd.cn/allin/personal/app/#/index
+    Sleep    5s
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span    10    元素不可见
+    ${fans}=    Get Text    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span
+    Click Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[2]/a/div/span
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[2]/ul/li[1]/a/div[2]/div[1]    10    元素不可见
+    ${num}=    Set Variable If    ${fans} >= 10    10    ${fans}
+    Log    共有${fans}个粉丝，输出前${num}个粉丝的姓名：
+    : FOR    ${i}    IN RANGE    1    ${num}+1
+    \    ${name}=    Get Text    xpath=html/body/div[1]/section/div[2]/ul/li[${i}]/a/div[2]/div[1]
+
+查看我的订阅列表
+    Sleep    3s
+    Wait Until Page Contains Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[3]/a/div/span    10    元素不可见
+    ${dNum}=    Get Text    xpath=html/body/div[1]/section/div[2]/div[1]/div[3]/a/div/span
+    Click Element    xpath=html/body/div[1]/section/div[2]/div[1]/div[3]/a/div/span
+    Wait Until Page Contains Element    xpath=.//*[@id='home']/div[2]/div[1]/div/div[1]/img    10    元素不可见
+    Click Element    xpath=.//*[@id='home']/div[2]/div[1]/div/div[1]/img
+    Wait Until Page Contains Element    xpath=.//*[@id='addDy']/div[2]/ul/li[1]/div    10    元素不可见
+    ${count}    Create List
+    : FOR    ${i}    IN RANGE    1    15
+    \    ${tagSrc}=    Get Element Attribute    xpath=.//*[@id='addDy']/div[2]/ul/li[${i}]/div/div[2]/img@src
+    \    ${status}=    Run Keyword And Return Status    Should Contain    ${tagSrc}    dui.jpg
+    \    Run Keyword If    ${status}    Append To List    ${count}    ${i}
+    ${len}=    Get Length    ${count}
+    Log    共订阅${len}个专业，分别是:
+    ${texts}    Create List
+    : FOR    ${j}    IN RANGE    0    len(${count})
+    \    ${text}    Get Text    xpath=.//*[@id='addDy']/div[2]/ul/li[${count[${j}]}]/div/div[1]
+    \    Append To List    ${texts}    ${text}
+    #Run Keyword If    int(${dNum}) == ${len}    Log    已查看订阅列表，当前已订阅${dNum}个专业    ELSE    Fail    显示已订阅${dNum}个专业，但真正订阅了${len}个专业
+
+添加订阅
+    Sleep    3s
+    Wait Until Page Contains Element    xpath=.//*[@class='dy_cont']/a/div/div    10    元素不可见
+    Click Element    xpath=.//*[@class='dy_cont']/a/div/div
+    Wait Until Page Contains Element    xpath=.//*[@class='add_dy_img']/img    10    元素不可见
+    Click Element    xpath=.//*[@class='add_dy_img']/img
+    Wait Until Page Contains Element    xpath=.//*[@id='addDy']/div[2]/ul/li[1]/div    10    元素不可见
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='addDy']/div[2]/ul/li[1]/div/div[2]/img
+    ${text1}=    Get Text    xpath=.//*[@id='addDy']/div[2]/ul/li[1]/div/div[1]
+    Sleep    2s
+    Click Element    xpath=.//*[@id='addDy']/div[2]/ul/li[2]/div/div[2]/img
+    ${text2}=    Get Text    xpath=.//*[@id='addDy']/div[2]/ul/li[2]/div/div[1]
+    Sleep    2s
+    Click Element    xpath=.//*[@id='addDy']/div[1]/div[1]/img
+    Sleep    5s
+    ${status1}=    Run Keyword And Return Status    Table Should Contain    xpath=//*[@id="home"]    ${text1}
+    ${status2}=    Run Keyword And Return Status    Table Should Contain    xpath=//*[@id="home"]    ${text1}
+    Run Keyword If    ${status1} and ${status2}    Log    ${text1}和${text2}添加订阅成功    ELSE    Fail    订阅失败，请检查后再试
+
+取消订阅
+    Wait Until Page Contains Element    xpath=.//*[@class='add_dy_img']/img    10    元素不可见
+    Click Element    xpath=.//*[@class='add_dy_img']/img
+    Wait Until Page Contains Element    xpath=.//*[@id='addDy']/div[2]/ul/li[1]/div    10    元素不可见
+    Click Element    xpath=.//*[@id='addDy']/div[2]/ul/li[1]/div/div[2]/img
+    ${text1}=    Get Text    xpath=.//*[@id='addDy']/div[2]/ul/li[1]/div/div[1]
+    Sleep    2s
+    Click Element    xpath=.//*[@id='addDy']/div[2]/ul/li[2]/div/div[2]/img
+    ${text2}=    Get Text    xpath=.//*[@id='addDy']/div[2]/ul/li[2]/div/div[1]
+    Sleep    2s
+    Click Element    xpath=.//*[@id='addDy']/div[1]/div[1]/img
+    Sleep    5s
+    ${status1}=    Run Keyword And Return Status    Table Should Contain    xpath=//*[@id="home"]    ${text1}
+    ${status2}=    Run Keyword And Return Status    Table Should Contain    xpath=//*[@id="home"]    ${text2}
+    Run Keyword If    ${status1} == False and ${status2} == False    Log    ${text1}和${text2}取消订阅成功    ELSE    Fail    取消订阅失败，请检查后再试
+    Wait Until Page Contains Element    xpath=.//*[@class='case_fh']/a/img    10    元素不可见
+    Click Element    xpath=.//*[@class='case_fh']/a/img
+    Sleep    2s

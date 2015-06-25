@@ -1,0 +1,44 @@
+*** Settings ***
+Library           Selenium2Library
+Resource          l1-page.txt
+Resource          l3-elements-07personal.txt
+Resource          l2-flow.txt
+Library           DatabaseLibrary
+Library           RequestsLibrary
+Library           HttpLibrary
+Library           AppiumLibrary
+Resource          l3-elements-00public.txt
+Resource          l3-elements-01index.txt
+Resource          l4-appium.txt
+
+*** Test Cases ***
+test
+    Open Application    http://localhost:4723/wd/hub    browserName=chrome    device=Selendroid    platformVersion=4.1.1    platformName=Android    udid=94122ad8
+    ...    deviceName=MI_2A
+    Go To Url    http://m.allinmd.cn
+    sleep    5s
+    Swipe    20    75    20    300
+    [Teardown]    run keyword if    ${exchangeable_num}>=100    close browser
+
+test2
+    Connect To Database Using Custom Params    pymysql    db='sun', user='sun', password='111111', host='localhost', port=3306,charset='utf8'
+    ${results}=    Query    Select * from py_books where filewriter = '佚名'
+    Log    ${results[0][2].decode('utf8')}
+
+test3
+    Create Session    test    http://192.168.1.33:8080/allin_manager_platform//logEmailAction!list?order=asc&page=1&queryJson={'email'%3A'test01@smc.com'}&rows=1&sort=id
+    ${req}=    Get Request    test    http://192.168.1.33:8080/allin_manager_platform//logEmailAction!list?order=asc&page=1&queryJson={'email'%3A'test01@smc.com'}&rows=1&sort=id
+    log    ${req.status_code}
+
+test4
+    打开应用    http://m.allinmd.cn
+    Sleep    3s
+    Switch To Context    WEBVIEW_1
+    #    ${text}    Selenium2Library.Get Text    xpath=html/body/section/div[2]/ul/li[1]/div/a
+    Switch To Context    NATIVE_APP
+    Swipe    314    1100    250    575
+
+test5
+    ${date}    Get Time    year,month,day,hour    2015-06-07
+    ${date2}    Get Time    NOW
+    ${time}    Get Time    year,month,day    2015-06-11 00:00:00 + 24h

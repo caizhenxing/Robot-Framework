@@ -1,0 +1,127 @@
+*** Settings ***
+Library           Selenium2Library
+Library           Collections
+Library           UtilsLibrary
+
+*** Keywords ***
+验证title
+    [Arguments]    ${title}
+    Title Should Be    ${title}
+
+未认证终端页权限判断
+    Wait Until Page Contains Element    xpath=.//*[@id='checkRenZhengBox']/div[2]    10    元素不可见
+    ${attribute}=    Get Element Attribute    xpath=.//*[@id='checkRenZhengBox']/div[2]@class
+    ${att}=    Set Variable    ${attribute.replace(' ','')}
+    ${auth}=    Set Variable    center-img
+    Run Keyword If    '${att}' == '${auth}'    log    您已登录但没有认证，请认证后再试    ELSE    Fail    权限显示错误，请检查后再试
+    ${pageTitle}    Get Title
+    Set Test Variable    ${pageTitle}
+
+关闭浏览器
+    Close All Browsers
+    Sleep    3s
+
+打开浏览器
+    ${capabilities}=    Create Dictionary
+    Set To Dictionary    ${capabilities}    platformName    ${platformName}
+    Set To Dictionary    ${capabilities}    platformVersion    ${platformVersion}
+    Set To Dictionary    ${capabilities}    deviceName    ${deviceName}    #SM_G9006V,MI_2A
+    Set To Dictionary    ${capabilities}    udid    ${udid}    #290d9b51,94122ad8
+    Close All Browsers
+    Open Browser    ${url}    browser= ${browserName}    alias=browser    remote_url=http://127.0.0.1:4723/wd/hub    desired_capabilities=${capabilities}
+
+未登录终端页权限判断
+    Wait Until Page Contains Element    xpath=.//*[@id='checkRenZhengBox']/div[2]    10    元素不可见
+    ${attribute}=    Get Element Attribute    xpath=.//*[@id='checkRenZhengBox']/div[2]@class
+    ${att}=    Set Variable    ${attribute.replace(' ','')}
+    ${login}=    Set Variable    center-imglogin-type
+    Run Keyword If    '${att}' == '${login}'    log    您没有登录，请登录后再试    ELSE    Fail    权限显示错误，请检查后再试
+    ${pageTitle}    Get Title
+    Set Test Variable    ${pageTitle}
+
+完成全部测试
+    Log    全部case执行完成
+
+初始化环境
+    #重启adb进程
+    Kill Process    5037
+    #push图片到测试机
+    Cmd    adb push D:/JK/workspace/allin.h5.build.rf.test/image //storage//sdcard0//temp
+    重启Appium Server
+    #platformName
+    ${platformName}    Read Xml    platformName
+    Set Suite Variable    ${platformName}
+    #platformVersion
+    ${platformVersion}    Read Xml    platformVersion
+    Set Suite Variable    ${platformVersion}
+    #deviceName
+    ${deviceName}    Read Xml    deviceName
+    Set Suite Variable    ${deviceName}
+    #udid
+    ${udid}    Read Xml    udid
+    Set Suite Variable    ${udid}
+    #browserName
+    ${browserName}    Read Xml    browserName
+    Set Suite Variable    ${browserName}
+    #url
+    ${url}    Read Xml    url
+    Set Suite Variable    ${url}
+    #唯医登录邮箱（已认证）
+    ${email}    Read Xml    email
+    Set Suite Variable    ${email}
+    #唯医登录邮箱（未认证）
+    ${emailNotRenZheng}    Read Xml    emailNotRenZheng
+    Set Suite Variable    ${emailNotRenZheng}
+    #唯医登录手机（已认证）
+    ${phone}    Read Xml    phone
+    Set Suite Variable    ${phone}
+    #唯医登录手机（未认证）
+    ${phoneNotRenZheng}    Read Xml    phoneNotRenZheng
+    Set Suite Variable    ${phoneNotRenZheng}
+    #caos登录邮箱
+    ${caosEmail}    Read Xml    caosEmail
+    Set Suite Variable    ${caosEmail}
+    #caos登录手机
+    ${caosPhone}    Read Xml    caosPhone
+    Set Suite Variable    ${caosPhone}
+    #后台获取邮件日志
+    ${managerEmailUrl}    Read Xml    managerEmailUrl
+    Set Suite Variable    ${managerEmailUrl}
+    #后台获取短信日志
+    ${managerPhoneUrl}    Read Xml    managerPhoneUrl
+    Set Suite Variable    ${managerPhoneUrl}
+    #修改设备hosts
+    Alterhosts Set Up    ${platformName}    ${platformVersion}    ${deviceName}    ${udid}
+    Sleep    1.5s
+    Alter Hosts
+    重启Appium Server
+
+点击屏蔽图片
+    Wait Until Page Contains Element    xpath=.//*[@id='checkRenZhengBox']    10    元素不可见
+    Click Element    xpath=.//*[@id='checkRenZhengBox']
+
+验证终端页登录跳转
+    Sleep    3s
+    ${status1}    Run Keyword And Return Status    验证title    ${pageTitle}
+    ${status2}    Run Keyword And Return Status    Get Element Attribute    xpath=.//*[@id='checkRenZhengBox']/div[2]@class
+    Run Keyword If    ${status1} and ${status2} == False    Log    返回来源终端页成功，且用户已登录已认证    ELSE    Fail    返回来源终端页失败，或者用户未登录未认证
+
+还原环境
+    #重启Appium Server
+    重启Appium Server
+    #还原设备hosts
+    Alterhosts Set Up    ${platformName}    ${platformVersion}    ${deviceName}    ${udid}
+    Update Hosts
+    Save Hosts
+    Sleep    3s
+    #还原默认输入法为搜狗
+    Cmd    adb shell settings put secure default_input_method com.sohu.inputmethod.sogou/.SogouIME
+
+终止adb进程
+    #    Cmd    taskkill /im adb.exe /F
+    Kill Process    5037
+
+重启Appium Server
+    Kill Process    4723
+    Reboot Appium
+    Sleep    5s

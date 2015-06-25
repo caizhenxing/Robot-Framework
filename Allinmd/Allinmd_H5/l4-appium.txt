@@ -1,0 +1,56 @@
+*** Settings ***
+Library           AppiumLibrary
+Library           Selenium2Library
+
+*** Keywords ***
+关闭应用
+    Close All Applications
+
+打开应用
+    [Arguments]    ${url}
+    Open Application    http://localhost:4723/wd/hub    browserName=chrome    platformVersion=4.4.2    platformName=Android    udid=290d9b51    deviceName=SM_G9006V
+    Go To Url    ${url}
+    Sleep    2s
+
+删除评论
+    Go To    ${att}
+    Sleep    3s
+    Title Should Be    ${title}
+    \    \    Page Should Contain    ${content}
+
+唯医登录
+    [Arguments]    ${username}    ${password}
+    打开应用    http://m.allinmd.cn
+    AppiumLibrary.Wait Until Page Contains    我的    10    元素不可见
+    AppiumLibrary.Click Element    xpath=html/body/section/div[1]/div[2]/a/div
+    AppiumLibrary.Wait Until Page Contains    唯医会员登录    10    元素不可见
+    AppiumLibrary.Click Element    xpath=.//*[@id='allinLoginPage']/div[2]/div[1]/a[2]
+    AppiumLibrary.Input Text    xpath=.//*[@id='email']    ${username}
+    AppiumLibrary.Input Text    xpath=.//*[@id='allinLoginForm']/div[2]/div[1]/input    ${password}
+    AppiumLibrary.Click Element    xpath=.//*[@id='loginBtn']
+    Sleep    3s
+
+进入终端页
+    AppiumLibrary.Click Element    xpath=.//*[@id='classMenu_a_top']/li[2]/a
+    AppiumLibrary.Wait Until Page Contains    全部    10    元素不可见
+    AppiumLibrary.Click Element    xpath=html/body/section/div[3]/ul/li[1]/div
+    Sleep    5s
+    AppiumLibrary.Click Element    xpath=.//*[@id='videoList']/li[1]/div/div[2]/div[1]/a
+    Sleep    3s
+
+发布评论
+    Sleep    3s
+    AppiumLibrary.Click Element    xpath=.//*[@id='anchor']/img
+    Set Test Variable    ${content}    阁下高见，说的极为正确。佩服，佩服！
+    AppiumLibrary.Input Text    xpath=.//*[@id='index']/div[3]/form/div[1]/div/div[2]/textarea    ${content}
+    AppiumLibrary.Click Element    xpath=.//*[@id='index']/div[3]/form/div[4]
+
+个人中心查看评论
+    AppiumLibrary.Wait Until Page Contains    我的    10    元素不可见
+    AppiumLibrary.Click Element    xpath=html/body/section/div[3]/div[2]/a/div
+    Sleep    5s
+    AppiumLibrary.Wait Until Page Contains    我的评论    10    元素不可见
+    AppiumLibrary.Click Element    xpath=html/body/div[1]/section/div[3]/ul/li[2]/a/div[2]
+    Sleep    3s
+    ${con}    Get Current Context
+    ${text}    Get Text    .//*[@id='allinLoginPage']/div[2]/ul/li

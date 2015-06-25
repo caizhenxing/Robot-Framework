@@ -1,0 +1,115 @@
+*** Settings ***
+Library           Selenium2Library
+Library           UtilsLibrary
+Resource          l2-flow.txt
+
+*** Keywords ***
+点击全部按钮
+    Selenium2Library.Click Element    xpath=.//*[@class='tag_li_index']/li[1]/div/a
+    ${title}    Get Title
+    log    已进入${title}
+    Sleep    3s
+
+列表按最多评论排序
+    Wait Until Page Contains Element    xpath=.//*[@class='order-box']    10    元素不可见
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[4]/div    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[4]/div
+    Sleep    3s
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    7
+    \    ${str}=    Get Text    xpath=.//*[@id='videoList']/li[${i}]/div/div[2]/div[2]/div[3]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]} and ${text[2]} >= ${text[3]} and ${text[3]} >=${text[4]} and ${text[4]} >= ${text[5]} \    Log    按最多评论排序成功    ELSE    Fail    当前没有按最多评论排序
+
+列表按最多浏览排序
+    Wait Until Page Contains Element    xpath=.//*[@class='order-box']    10    元素不可见
+    Click Element    xpath=.//*[@class='order-box']
+    Wait Until Page Contains Element    xpath=.//*[@class='order-select-box']/ul/li[3]/div    10    元素不可见
+    Click Element    xpath=.//*[@class='order-select-box']/ul/li[3]/div
+    Sleep    3s
+    ${text}    Create List
+    : FOR    ${i}    IN RANGE    1    7
+    \    ${str}=    Get Text    xpath=.//*[@id='videoList']/li[${i}]/div/div[2]/div[2]/div[2]/span
+    \    Append To List    ${text}    ${str.replace('K+','000')}
+    \    Log Many    ${text}
+    Run Keyword If    ${text[0]} >= ${text[1]} and ${text[1]} >= ${text[2]} and ${text[2]} >= ${text[3]} and ${text[3]} >=${text[4]} and ${text[4]} >= ${text[5]} \    Log    按最多浏览排序成功    ELSE    Fail    当前没有按最多浏览排序
+
+列表按专业筛选
+    Reload Page
+    Sleep    3s
+    Wait Until Page Contains Element    xpath=.//*[@id='options-select-menu']/li[1]/div    10    元素不可见
+    Click Element    xpath=.//*[@id='options-select-menu']/li[1]/div
+    Wait Until Page Contains Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div    10    元素不可见
+    ${text1}=    Get Text    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Click Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Log    已选中专业"${text1}"
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='videoList']/li[1]/div/div[2]/div[1]/a
+    Wait Until Page Contains Element    xpath=.//*[@id='detail']/div[3]/div/div[4]/ul/li[1]    10    元素不可见 or 没有标签，专业筛选错误
+    ${title}=    Get Title
+    Log    进入视频"${title}"
+    ${status}=    Run Keyword And Return Status    Page Should Contain    ${text1}
+    Run Keyword If    ${status}    Log    按专业筛选成功    ELSE    Fail    按专业筛选失败
+    Go Back
+    Sleep    5s
+
+列表按标签筛选
+    Reload Page
+    Sleep    3s
+    Wait Until Page Contains Element    xpath=.//*[@id='options-select-menu']/li[2]/div    10    元素不可见
+    Click Element    xpath=.//*[@id='options-select-menu']/li[2]/div
+    Wait Until Page Contains Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div    10    元素不可见
+    ${text2}=    Get Text    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Click Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Log    已选中标签"${text2}"
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='videoList']/li[2]/div/div[2]/div[1]/a
+    Wait Until Page Contains Element    xpath=.//*[@id='detail']/div[3]/div/div[4]/ul/li[1]    10    元素不可见 or 没有标签，标签筛选错误
+    ${title}=    Get Title
+    Log    进入视频"${title}"
+    ${status}=    Run Keyword And Return Status    Page Should Contain    ${text2}
+    Run Keyword If    ${status}    Log    按标签筛选成功    ELSE    Fail    按标签筛选失败
+    Go Back
+    Sleep    5s
+
+列表按专业和标签筛选
+    Reload Page
+    Sleep    3s
+    Wait Until Page Contains Element    xpath=.//*[@id='options-select-menu']/li[1]/div    10    元素不可见
+    Click Element    xpath=.//*[@id='options-select-menu']/li[1]/div
+    Wait Until Page Contains Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div    10    元素不可见
+    ${text1}=    Get Text    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Click Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Log    已选中专业"${text1}"
+    Wait Until Page Contains Element    xpath=.//*[@id='options-select-menu']/li[2]/div    10    元素不可见
+    Click Element    xpath=.//*[@id='options-select-menu']/li[2]/div
+    Wait Until Page Contains Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div    10    元素不可见
+    ${text2}=    Get Text    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Click Element    xpath=html/body/div[1]/div[5]/div[1]/ul/li[3]/div
+    Log    已选中标签"${text2}"
+    Sleep    1.5s
+    Click Element    xpath=.//*[@id='videoList']/li[2]/div/div[2]/div[1]/a
+    Wait Until Page Contains Element    xpath=.//*[@id='detail']/div[3]/div/div[4]/ul/li[1]    10    元素不可见 or 没有标签，标签筛选错误
+    ${title}=    Get Title
+    Log    进入视频"${title}"
+    ${status1}=    Run Keyword And Return Status    Page Should Contain    ${text1}
+    ${status2}=    Run Keyword And Return Status    Page Should Contain    ${text2}
+    Run Keyword If    ${status1} and ${status2}    Log    按专业和标签筛选成功    ELSE    Fail    按专业和标签筛选失败
+    Sleep    5s
+
+进入视频列表
+    进入视频首页
+    l3-elements-03video .点击全部按钮
+
+进入视频终端页
+    Wait Until Page Contains Element    xpath=.//*[@id='videoList']/li[1]/div/div[2]/div[1]/a    10    元素不可见
+    Click Element    xpath=.//*[@id='videoList']/li[1]/div/div[2]/div[1]/a
+    Sleep    5s
+
+点击收藏按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='EQ_fiexdRelation']/ul/li[3]/img    10    元素不可见
+    Click Element    xpath=.//*[@id='EQ_fiexdRelation']/ul/li[3]/img
+    ${title}    Get Title
+    Set Test Variable    ${pageTitle}    ${title}

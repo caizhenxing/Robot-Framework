@@ -1,0 +1,6 @@
+*** Settings ***
+Library           AutoItLibrary
+Library           UtilsLibrary
+Library           RequestsLibrary
+Library           DatabaseLibrary
+Library           Collections

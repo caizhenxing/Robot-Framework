@@ -1,0 +1,6 @@
+*** Settings ***
+Resource          l2-flow.txt
+
+*** Test Cases ***
+test
+    安装并启动应用

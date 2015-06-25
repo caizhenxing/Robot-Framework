@@ -1,0 +1,27 @@
+*** Settings ***
+Library           Selenium2Library
+Library           AutoItLibrary
+
+*** Keywords ***
+打开浏览器
+    [Arguments]    ${url}
+    open browser    ${url}    ff
+
+登录业务
+    open browser    http://www.allinmd.cn/    firefox    #打开浏览器
+    input text    xpath=.//*[@id='allinLogin']/div[3]/input    test@smc.com    #输入用户名
+    input text    xpath=.//*[@id='allinLogin']/div[4]/input    111111    #输入密码
+    click element    id=allinSubmitBtn    \    #点击登陆按钮
+
+登录
+    [Arguments]    ${username}    ${password}    # 用户名和密码
+    input text    xpath=.//*[@id='allinLogin']/div[3]/input    ${username}    #输入用户名和密码并登陆
+    input text    xpath=.//*[@id='allinLogin']/div[4]/input    ${password}
+    click element    id=allinSubmitBtn
+
+选择frame
+    [Arguments]    ${frame}    # 框架name
+    Select Frame    id=${frame}
+
+等待页面元素可见
+    Wait Until Page Contains Element    xpath=.//*[@id='allinLogin']/div[3]/input    10    Error:元素不可见

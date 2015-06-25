@@ -1,0 +1,23 @@
+*** Settings ***
+Resource          元素层.txt
+Library           AutoItLibrary
+Library           Selenium2Library
+Library           UtilsLibrary
+Resource          业务层.txt
+
+*** Test Cases ***
+登录唯医
+    [Setup]
+    打开浏览器    http://www.allinmd.cn/
+    Maximize Browser Window
+    等待页面元素可见
+    登录    test@smc.com    111111
+
+得到重置密码验证码
+    ${email_url}=    Get Email    http://192.168.1.33:8080/allin_manager_platform//logEmailAction!list    liangyuanqi@allinmd.cn
+    log    ${email_url}
+    ${phone_code}=    Get Phone    http://192.168.1.33:8080/allin_manager_platform//logSmsAction!list    15011549552
+    log    ${phone_code}
+
+启动手机浏览器
+    打开手机浏览器

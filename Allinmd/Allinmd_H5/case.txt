@@ -1,0 +1,283 @@
+*** Settings ***
+Suite Setup       初始化环境
+Suite Teardown    还原环境
+Test Teardown     关闭浏览器
+Test Timeout      20 minutes    超时退出
+Resource          l1-page.txt
+Resource          l2-flow.txt
+Resource          l3-elements-01index.txt
+Resource          l3-elements-02case.txt
+Resource          l3-elements-03video.txt
+Resource          l3-elements-04expert.txt
+Resource          l3-elements-05doc.txt
+Resource          l3-elements-06topic.txt
+Resource          l3-elements-07personal.txt
+Resource          l3-elements-00public.txt
+
+*** Test Cases ***
+case01-首页-邮箱注册-医师认证
+    [Tags]    DBWrite    reg
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    点击立即注册按钮
+    Run Keyword And Continue On Failure    邮箱注册
+    Run Keyword And Continue On Failure    医师认证
+    Run Keyword And Continue On Failure    跳过关注专业
+
+case02-首页-手机注册-医师认证
+    [Tags]    NoRun    reg    DBWrite
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    点击立即注册按钮
+    Run Keyword And Continue On Failure    手机注册
+    Run Keyword And Continue On Failure    医师认证
+    Run Keyword And Continue On Failure    跳过关注专业
+
+case03-首页-手机注册-跳过认证
+    [Tags]    DBWrite    reg
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    点击立即注册按钮
+    Run Keyword And Continue On Failure    手机注册
+    Run Keyword And Continue On Failure    跳过认证
+
+case04-首页-邮箱注册-跳过认证
+    [Tags]    NoRun    reg    DBWrite
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    点击立即注册按钮
+    Run Keyword And Continue On Failure    邮箱注册
+    Run Keyword And Continue On Failure    跳过认证
+
+case05-首页-手机唯医登录-退出登录
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    退出登录
+
+case06-首页-邮箱唯医登录-退出登录
+    Run Keyword And Continue On Failure    唯医用户登录    ${email}    111111
+    Run Keyword And Continue On Failure    退出登录
+
+case07-未登录-病例终端页权限判断
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    进入病例列表
+    Run Keyword And Continue On Failure    进入病例终端页
+    Run Keyword And Continue On Failure    未登录终端页权限判断
+    Run Keyword And Continue On Failure    点击屏蔽图片
+    Run Keyword And Continue On Failure    点击唯医会员登录按钮
+    Run Keyword And Continue On Failure    输入用户名和密码并登录    ${email}    111111
+    Run Keyword And Continue On Failure    验证终端页登录跳转
+
+case08-未认证-病例终端页权限判断
+    [Tags]    reg
+    Run Keyword And Continue On Failure    唯医用户登录    ${NoRZPhone}    111111    #依赖case03
+    Run Keyword And Continue On Failure    进入病例列表
+    Run Keyword And Continue On Failure    进入病例终端页
+    Run Keyword And Continue On Failure    未认证终端页权限判断
+    Run Keyword And Continue On Failure    点击屏蔽图片
+    Run Keyword And Continue On Failure    医师认证
+    Run Keyword And Continue On Failure    验证终端页登录跳转
+
+case09-未登录-文库终端页权限判断
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    进入文库列表
+    Run Keyword And Continue On Failure    进入文库终端页
+    Run Keyword And Continue On Failure    未登录终端页权限判断
+    Run Keyword And Continue On Failure    点击屏蔽图片
+    Run Keyword And Continue On Failure    点击唯医会员登录按钮
+    Run Keyword And Continue On Failure    输入用户名和密码并登录    ${email}    111111
+    Run Keyword And Continue On Failure    验证终端页登录跳转
+
+case10-未认证-文库终端页权限判断
+    Run Keyword And Continue On Failure    唯医用户登录    ${emailNotRenZheng}    111111
+    Run Keyword And Continue On Failure    进入文库列表
+    Run Keyword And Continue On Failure    进入文库终端页
+    Run Keyword And Continue On Failure    未认证终端页权限判断
+
+case11-未登录-话题终端页权限判断
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    进入话题列表
+    Run Keyword And Continue On Failure    进入话题终端页
+    Run Keyword And Continue On Failure    未登录终端页权限判断
+    Run Keyword And Continue On Failure    点击屏蔽图片
+    Run Keyword And Continue On Failure    点击唯医会员登录按钮
+    Run Keyword And Continue On Failure    输入用户名和密码并登录    ${email}    111111
+    Run Keyword And Continue On Failure    验证终端页登录跳转
+
+case12-未认证-话题终端页权限判断
+    Run Keyword And Continue On Failure    唯医用户登录    ${emailNotRenZheng}    111111
+    Run Keyword And Continue On Failure    进入话题列表
+    Run Keyword And Continue On Failure    进入话题终端页
+    Run Keyword And Continue On Failure    未认证终端页权限判断
+
+case13-首页-唯医登陆-修改密码
+    [Tags]    DBWrite
+    Set Test Variable    ${userName}    smc138@163.com
+    Run Keyword And Continue On Failure    唯医用户登录    ${userName}    111111
+    Run Keyword And Continue On Failure    修改密码    111111    123456
+
+case14-首页-手机-忘记密码
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    打开浏览器
+    ${random}    Evaluate    random.randint(2,10)    random,sys
+    ${ranStr}    Evaluate    random.randint(100000,999999)    random,sys
+    Set Test Variable    ${ranStr}
+    Run Keyword And Continue On Failure    手机忘记密码    1770001000${random}    ${ranStr}    #一个手机号只能使用三次
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    点击唯医会员登录按钮
+    Run Keyword And Continue On Failure    输入用户名和密码并登录    1770001000${random}    ${ranStr}
+    Sleep    3s
+    ${status}    Run Keyword And Return Status    验证title    唯医首页 - allinmd.cn
+    Run Keyword If    ${status}    log    用户'1770001000${random}'密码重置成功    ELSE    Fail    用户'1770001000${random}'密码重置失败，请检查
+
+case15-首页-邮箱-忘记密码
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    打开浏览器
+    Run Keyword And Continue On Failure    邮箱忘记密码    ${email}    111111
+
+case16-首页-手机CAOS登录-退出登录
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    CAOS用户登录    ${caosPhone}    111111
+    Run Keyword And Continue On Failure    验证title    唯医首页 - allinmd.cn
+    Run Keyword And Continue On Failure    退出登录
+
+case17-首页-邮箱CAOS登录-退出登录
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    CAOS用户登录    ${caosEmail}    111111
+    Run Keyword And Continue On Failure    验证title    唯医首页 - allinmd.cn
+    Run Keyword And Continue On Failure    退出登录
+
+case18-病例列表-排序并筛选
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    验证title    唯医首页 - allinmd.cn
+    Run Keyword And Continue On Failure    进入病例列表
+    Run Keyword And Continue On Failure    l3-elements-02case.列表按最多评论排序
+    Run Keyword And Continue On Failure    l3-elements-02case.列表按最多浏览排序
+    Run Keyword And Continue On Failure    l3-elements-02case.列表按专业筛选
+    Run Keyword And Continue On Failure    l3-elements-02case.列表按标签筛选
+    Run Keyword And Continue On Failure    l3-elements-02case.列表按专业和标签筛选
+
+case19-视频列表-排序并筛选
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    验证title    唯医首页 - allinmd.cn
+    Run Keyword And Continue On Failure    进入视频列表
+    Run Keyword And Continue On Failure    l3-elements-03video.列表按最多评论排序
+    Run Keyword And Continue On Failure    l3-elements-03video.列表按最多浏览排序
+    Run Keyword And Continue On Failure    l3-elements-03video.列表按专业筛选
+    Run Keyword And Continue On Failure    l3-elements-03video.列表按标签筛选
+    Run Keyword And Continue On Failure    l3-elements-03video.列表按专业和标签筛选
+
+case20-医师列表-排序并筛选
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    验证title    唯医首页 - allinmd.cn
+    Run Keyword And Continue On Failure    进入医师列表
+    Run Keyword And Continue On Failure    l3-elements-04expert.列表按最受关注排序
+    Run Keyword And Continue On Failure    l3-elements-04expert.列表按专业筛选
+
+case21-文库列表-排序并筛选
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    验证title    唯医首页 - allinmd.cn
+    Run Keyword And Continue On Failure    进入文库列表
+    Run Keyword And Continue On Failure    l3-elements-05doc .列表按最多评论排序
+    Run Keyword And Continue On Failure    l3-elements-05doc .列表按最多浏览排序
+
+case22-话题列表-排序并筛选
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    验证title    唯医首页 - allinmd.cn
+    Run Keyword And Continue On Failure    进入话题列表
+    Run Keyword And Continue On Failure    l3-elements-06topic.列表按最多评论排序
+    Run Keyword And Continue On Failure    l3-elements-06topic.列表按最多浏览排序
+    Run Keyword And Continue On Failure    l3-elements-06topic.列表按标签筛选
+
+case23-搜索-输入作者-结果展示
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    点击搜索按钮
+    Run Keyword And Continue On Failure    输入数据并点击搜索按钮    王岩
+    Run Keyword And Continue On Failure    搜索结果页展示
+
+case24-搜索-输入医学关键词-结果展示
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    点击搜索按钮
+    Run Keyword And Continue On Failure    输入数据并点击搜索按钮    关节
+    Run Keyword And Continue On Failure    搜索结果页展示
+
+case25-标签列表-切换资源并排序
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    标签列表资源切换并排序
+
+case26-病例-发布\编辑\查看\删除-debug
+    [Tags]    NoRun    DBWrite
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    进入病例首页
+    Run Keyword And Continue On Failure    发布病例
+    Run Keyword And Continue On Failure    编辑病例
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    查看病例
+
+case27-话题-发布\查看\删除-debug
+    [Tags]    NoRun    DBWrite
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    进入话题首页
+    Run Keyword And Continue On Failure    发布话题
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    个人中心查看话题
+
+case28-评论-发布\查看\删除-debug
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    Reply Set Up    ${platformName}    ${platformVersion}    ${deviceName}    ${udid}    ${browserName}
+    Run Keyword And Continue On Failure    Login Allin    ${phone}    111111
+    Run Keyword And Continue On Failure    Content
+    Run Keyword And Continue On Failure    Release Reply
+    Run Keyword And Continue On Failure    Select Reply
+    Run Keyword And Continue On Failure    Delete Reply
+    Run Keyword And Continue On Failure    Close Application
+
+case29-病例-收藏\查看
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    进入病例列表
+    Run Keyword And Continue On Failure    进入病例终端页
+    Run Keyword And Continue On Failure    l2-flow .点击收藏按钮
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    个人中心查看收藏的病例
+
+case30-视频-收藏\查看-debug
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    进入视频列表
+    Run Keyword And Continue On Failure    进入视频终端页
+    Run Keyword And Continue On Failure    l3-elements-03video.点击收藏按钮
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    个人中心查看收藏的视频
+
+case31-话题-收藏\查看-debug
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    进入话题列表
+    Run Keyword And Continue On Failure    进入话题终端页
+    Run Keyword And Continue On Failure    l2-flow.点击收藏按钮
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    个人中心查看收藏的话题
+
+case32-查看他人-收藏\评论\各类资源-debug
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    进入医师列表
+    Run Keyword And Continue On Failure    进入医师个人中心
+    Run Keyword And Continue On Failure    查看他人资源
+
+case33-添加\取消关注-查看粉丝
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    进入医师列表
+    Run Keyword And Continue On Failure    进入医师个人中心
+    Run Keyword And Continue On Failure    添加关注
+    Run Keyword And Continue On Failure    取消关注
+    Run Keyword And Continue On Failure    查看他人粉丝列表
+    Run Keyword And Continue On Failure    查看我的粉丝列表
+
+case34-添加\取消订阅-查看订阅
+    [Tags]    DBWrite
+    Run Keyword And Continue On Failure    唯医用户登录    ${phone}    111111
+    Run Keyword And Continue On Failure    点击我的
+    Run Keyword And Continue On Failure    添加订阅
+    Run Keyword And Continue On Failure    取消订阅
+    Run Keyword And Continue On Failure    查看我的订阅列表

@@ -1,0 +1,75 @@
+*** Settings ***
+Library           Selenium2Library
+Library           UtilsLibrary
+Library           Collections
+Resource          l3-elements-00public.txt
+
+*** Keywords ***
+点击立即注册按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='allinLoginPage']/div[2]/a/div    10    元素不可见
+    Click Element    xpath=.//*[@id='allinLoginPage']/div[2]/a/div
+
+点击唯医会员登录按钮
+    Sleep    3s
+    验证title    登录选择
+    Wait Until Page Contains Element    xpath=.//*[@class='w-875']/div[1]/a[2]    10    元素不可见
+    Click Element    xpath=.//*[@class='w-875']/div[1]/a[2]
+
+点击设置按钮
+    Wait Until Page Contains Element    xpath=.//*[@class='top_tub']/div[3]/a/img    10    元素不可见
+    Click Element    xpath=.//*[@class='top_tub']/div[3]/a/img
+
+点击退出按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='logoutBtn']    10    元素不可见
+    Click Element    xpath=.//*[@id='logoutBtn']
+    Sleep    5s
+
+点击修改密码按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='updatePasswordBtn']    10    元素不可见
+    Click Element    xpath=.//*[@id='updatePasswordBtn']
+    Sleep    3s
+
+跳过认证
+    Title Should Be    医师认证
+    Click Element    xpath=.//*[@id='notRenZheng']
+    Sleep    5s
+    验证title    唯医首页 - allinmd.cn
+    log    注册成功并跳过认证
+
+跳过关注专业
+    Wait Until Page Contains Element    xpath=html/body/section/div[1]/div[2]    10    元素不可见
+    Click Element    xpath=html/body/section/div[1]/div[2]
+    Sleep    5s
+    验证title    唯医首页 - allinmd.cn
+    log    注册并认证成功
+
+点击CAOS会员登录按钮
+    Wait Until Page Contains Element    xpath=.//*[@id='allinLoginPage']/div[2]/div[1]/a[1]    10    元素不可见
+    Click Element    xpath=.//*[@id='allinLoginPage']/div[2]/div[1]/a[1]
+
+添加关注
+    Sleep    3s
+    Wait Until Page Contains Element    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img    10    元素不可见
+    ${attribute1}=    Get Element Attribute    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img@src
+    ${status1}=    Run Keyword And Return Status    Should Contain    ${attribute1}    tianjiaguanzhu
+    Click Element    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img
+    ${attribute2}=    Get Element Attribute    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img@src
+    ${text}=    Get Text    xpath=.//*[@class='top_center']/div/div[3]/div[1]
+    ${status2}=    Run Keyword And Return Status    Should Contain    ${attribute2}    yiguanzhu
+    Run Keyword If    ${status1} and ${status2}    Log    关注用户'${text}'成功    ELSE    Fail    关注用户'${text}'失败
+
+取消关注
+    Sleep    3s
+    Wait Until Page Contains Element    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img    10    元素不可见
+    ${attribute1}=    Get Element Attribute    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img@src
+    ${status1}=    Run Keyword And Return Status    Should Contain    ${attribute1}    yiguanzhu
+    Click Element    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img
+    Click Element    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[2]/img
+    ${attribute2}=    Get Element Attribute    xpath=.//*[@class='personal_gz_bottom']/div[2]/div[1]/img@src
+    ${text}=    Get Text    xpath=.//*[@class='top_center']/div/div[3]/div[1]
+    ${status2}=    Run Keyword And Return Status    Should Contain    ${attribute2}    tianjiaguanzhu
+    Run Keyword If    ${status1} and ${status2}    Log    取消关注用户'${text}'成功    ELSE    Fail    取消关注用户'${text}'失败
+
+点击我的
+    Wait Until Page Contains Element    xpath=.//*[@class='case_header']/div[2]/a/div    10    元素不可见
+    Click Element    xpath=.//*[@class='case_header']/div[2]/a/div
